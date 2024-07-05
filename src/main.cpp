@@ -23,9 +23,9 @@ void loop() {
     Serial.print("Tttt...\n");
     interval = (long)millis();
   }*/
-  while (GPSSerial.available() > 0)
+  while (GPSSerial.available() > 0) {
     if (gps.encode(GPSSerial.read())) displayInfo();
-
+  }
   if (millis() > 5000 && gps.charsProcessed() < 10) {
     Serial.println(F("No GPS detected: check wiring."));
     while(true);
