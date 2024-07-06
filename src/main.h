@@ -9,6 +9,8 @@
 #include <SoftwareSerial.h>
 #include <TinyGPSPlus.h>
 #include "RTClib.h"
+#include <Ethernet.h>
+#include <EthernetUdp.h>
 
 SoftwareSerial GPSSerial(5, 6); // RX, TX
 TinyGPSPlus gps;
@@ -31,19 +33,30 @@ uint8_t mac[6] = {MAC};
 #define DEBUGln(input)
 #endif
 
+#define SSEth           8
+#define REth            7
+
 #define fgpsOk 0
 #define fStart 1
 #define fOutDate 7
+#define NTP_PORT 123 // стандартный порт, не менять
 
 //#define Reset() asm("JMP 0")
 void (* Reset) (void) = 0;
 void setup_watchdog(int timerPrescaler);
 void getDateTimeGPS();
+void processNTP();
 void displayInfo();
 void serialPars();
 
+// Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
+// this is NTP time (seconds since Jan 1 1900):  Unixtime + seventyYears!!!!
+const unsigned long seventyYears = 2208988800UL;
+static const int NTP_PACKET_SIZE = 48;
+byte packetBuffer[NTP_PACKET_SIZE];
 String gpsData; // NMEA packet from GPS
 long last = 0;
 long lastRTCSet = 0;
 int interval = 1000;
 static uint8_t flags = 0;
+uint32_t timestamp, tempval;
