@@ -5,12 +5,14 @@
 #include <avr/wdt.h>
 //#include <EEPROM.h>
 #include <avr/boot.h>
+#include <SPI.h>
 #include <SoftwareSerial.h>
 #include <TinyGPSPlus.h>
+#include "RTClib.h"
 
-SoftwareSerial GPSSerial(10, 11); // RX, TX
+SoftwareSerial GPSSerial(5, 6); // RX, TX
 TinyGPSPlus gps;
-void displayInfo();
+RTC_DS3231 rtc;
 
 //#define DEBUG_EN        //comment out if you don't want any Soft serial output
 uint8_t mac[6] = {MAC};
@@ -28,7 +30,18 @@ uint8_t mac[6] = {MAC};
 #define DEBUGln(input)
 #endif
 
+#define fgpsOk 0
+#define fStart 1
+#define fOutDate 7
+
 //#define Reset() asm("JMP 0")
 void (* Reset) (void) = 0;
+void getDateTimeGPS();
+void displayInfo();
+void serialPars();
 
+String gpsData; // NMEA packet from GPS
+long last = 0;
+long lastRTCSet = 0;
 int interval = 1000;
+static uint8_t flags = 0;
