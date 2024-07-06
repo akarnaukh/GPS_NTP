@@ -27,6 +27,22 @@ void setup() {
    bitSet(flags,fStart);
    pinMode(13,OUTPUT);
    digitalWrite(13,LOW);
+   setup_watchdog(WDT_Time);
+  sei();
+}
+
+void setup_watchdog(int timerPrescaler) {
+    if (timerPrescaler > 9)
+        timerPrescaler = 9;  // Correct incoming amount if need be
+    byte bb = timerPrescaler & 7;
+    if (timerPrescaler > 7)
+        bb |= (1 << 5);
+    // This order of commands is important and cannot be combined
+    MCUSR &= ~(1 << WDRF);               // Clear the watch dog reset
+    WDTCSR |= (1 << WDCE) | (1 << WDE);  // Set WD_change enable, set WD enable
+    WDTCSR = bb;                         // Set new watchdog timeout value
+    WDTCSR |= _BV(WDIE);
+    // Set the interrupt enable, this will keep unit from resetting after each int
 }
 
 void loop() {

@@ -21,6 +21,7 @@ uint8_t mac[6] = {MAC};
 #define SERIAL_BAUD     115200
 #define SERIAL_BUF_MAX  60
 #define SERIALFLUSH()   Serial.flush()
+#define WDT_Time WDTO_2S
 
 #ifdef DEBUG_EN
 #define DEBUG(input)    Serial.print(input)
@@ -36,6 +37,7 @@ uint8_t mac[6] = {MAC};
 
 //#define Reset() asm("JMP 0")
 void (* Reset) (void) = 0;
+void setup_watchdog(int timerPrescaler);
 void getDateTimeGPS();
 void displayInfo();
 void serialPars();
