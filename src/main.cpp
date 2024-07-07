@@ -96,8 +96,10 @@ void loop() {
 
 void getDateTimeGPS() {
   while (GPSSerial.available() > 0) {
-    if (gps.encode(GPSSerial.read())) {
-      bitSet(flags,fgpsOk);
+    char gpsread = GPSSerial.read();
+    //if (bitRead(flags,fOutDate)) Serial.write(gpsread);
+    if (gps.encode(gpsread)) {
+      if (gps.location.isValid() && gps.date.isValid() && (gps.date.year() > 2000)) bitSet(flags,fgpsOk);
       //digitalWrite(pinLed,HIGH);
     }
   }
@@ -111,7 +113,6 @@ void processNTP() {
     int portNum = Udp.remotePort();
 
 //DEBUG
-    Serial.println();
     Serial.print("Received UDP packet size ");
     Serial.println(packetSize);
     Serial.print("From ");
@@ -121,8 +122,8 @@ void processNTP() {
       if (i<3) { Serial.print("."); }
     }
     Serial.print(", port ");
-    Serial.print(portNum);
-
+    Serial.println(portNum);
+/*
     byte LIVNMODE = packetBuffer[0];
     Serial.print("  LI, Vers, Mode :");
     Serial.print(packetBuffer[0], HEX);
@@ -147,6 +148,7 @@ void processNTP() {
     }
     Serial.println();
 // END DEBUG
+*/
 
     // Упаковываем данные в ответный пакет:
     packetBuffer[0] = 0b00100100;   // версия, режим
@@ -165,12 +167,12 @@ void processNTP() {
     packetBuffer[14] = 0;
       
     DateTime nowRtc = rtc.now();
-    Serial.print("Unixtime - ");
-    Serial.println(nowRtc.unixtime());
+    //Serial.print("Unixtime - ");
+    //Serial.println(nowRtc.unixtime());
 
-    tempval = nowRtc.unixtime();// - seventyYears;
-     Serial.println((String)tempval);
-
+    timestamp = nowRtc.unixtime() + seventyYears;
+    //Serial.println((String)timestamp);
+    tempval = timestamp;
     packetBuffer[12] = 71; //"G";
     packetBuffer[13] = 80; //"P";
     packetBuffer[14] = 83; //"S";
@@ -299,6 +301,19 @@ void serialPars() {
           Serial.print("Unixtime - ");
           Serial.print(nowRtc.unixtime());
           Serial.println("s");
+        }
+        if (input == '?') {
+          DateTime nowRtc = rtc.now();
+          Serial.print("Link status - ");
+          Serial.println(Ethernet.linkStatus());
+          Serial.print("My IP address: ");
+          Serial.println(Ethernet.localIP());
+          Serial.print("GPS sttaus - ");
+          if (bitRead(flags,fgpsOk)) Serial.println("Ok"); else Serial.println("Faild!");
+          Serial.print("Unixtime - ");
+          Serial.println(nowRtc.unixtime());
+          char buf2[] = "MM-DD-YYYY / hh:mm:ss";
+          Serial.println(nowRtc.toString(buf2));
         }
     }
 }
