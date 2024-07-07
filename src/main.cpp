@@ -82,7 +82,7 @@ void loop() {
     rtc.adjust(DateTime(gps.date.year(), gps.date.month(), gps.date.day(), gps.time.hour(), gps.time.minute(), gps.time.second()));
     bitClear(flags,fStart);
   }
-  if (bitRead(flags,fgpsOk) && ((now - lastRTCSet) > 120000) ) {
+  if (bitRead(flags,fgpsOk) && ((now - lastRTCSet) > 300000) ) {
     rtc.adjust(DateTime(gps.date.year(), gps.date.month(), gps.date.day(), gps.time.hour(), gps.time.minute(), gps.time.second()));
     Serial.println("RTC set from GPS...");
     lastRTCSet = (long)millis();
