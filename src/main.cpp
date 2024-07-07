@@ -308,6 +308,10 @@ void serialPars() {
           Serial.println(Ethernet.linkStatus());
           Serial.print("My IP address: ");
           Serial.println(Ethernet.localIP());
+          Serial.print("GW IP address: ");
+          Serial.println(Ethernet.gatewayIP());
+          Serial.print("DNS IP address: ");
+          Serial.println(Ethernet.dnsServerIP());
           Serial.print("MAC: ");
           for (int i = 0; i < 6; i++) {
             char hexMac[2];
