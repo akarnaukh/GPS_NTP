@@ -69,7 +69,7 @@ void loop() {
   wdt_reset();
   serialPars();
   processNTP();
-  getDateTimeGPS()
+  getDateTimeGPS();
   if ((now - last) > interval) {
     if (bitRead(flags,fOutDate)) displayInfo();
     //digitalWrite(pinLed,LOW);
