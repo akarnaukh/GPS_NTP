@@ -99,7 +99,7 @@ void getDateTimeGPS() {
     char gpsread = GPSSerial.read();
     //if (bitRead(flags,fOutDate)) Serial.write(gpsread);
     if (gps.encode(gpsread)) {
-      if (gps.location.isValid() && gps.date.isValid() && (gps.date.year() > 2000)) bitSet(flags,fgpsOk);
+      if (gps.location.isValid() && gps.date.isValid() && (gps.date.year() > 2000)) bitSet(flags,fgpsOk); else bitClear(flags,fgpsOk);
       //digitalWrite(pinLed,HIGH);
     }
   }
@@ -304,13 +304,21 @@ void serialPars() {
         }
         if (input == '?') {
           DateTime nowRtc = rtc.now();
-          Serial.print("Link status - ");
+          Serial.print("Link status: ");
           Serial.println(Ethernet.linkStatus());
           Serial.print("My IP address: ");
           Serial.println(Ethernet.localIP());
-          Serial.print("GPS sttaus - ");
+          Serial.print("MAC: ");
+          for (int i = 0; i < 6; i++) {
+            char hexMac[2];
+            sprintf(hexMac, "%02X", mac[i]);
+            Serial.print(hexMac); //, HEX);
+            if (i<5) Serial.print(":");
+          }
+          Serial.println();
+          Serial.print("GPS sttaus: ");
           if (bitRead(flags,fgpsOk)) Serial.println("Ok"); else Serial.println("Faild!");
-          Serial.print("Unixtime - ");
+          Serial.print("Unixtime: ");
           Serial.println(nowRtc.unixtime());
           char buf2[] = "MM-DD-YYYY / hh:mm:ss";
           Serial.println(nowRtc.toString(buf2));
