@@ -30,7 +30,8 @@ void setup() {
     //rtc.adjust(DateTime(2000, 0, 0, 0, 0, 0));
   }
   Ethernet.init(SSEth);
-  Ethernet.begin(mac);
+  //Ethernet.begin(mac);
+  Ethernet.begin(mac, ip, myDns, gateway, subnet);
   bitSet(flags,fStart);
   //pinMode(13,OUTPUT);
   //digitalWrite(13,LOW);

@@ -18,6 +18,11 @@ RTC_DS3231 rtc;
 
 //#define DEBUG_EN        //comment out if you don't want any Soft serial output
 uint8_t mac[6] = {MAC};
+IPAddress ip(10,1,10,250);
+IPAddress myDns(10, 1, 10, 1);
+IPAddress gateway(10, 1, 10, 1);
+IPAddress subnet(255, 255, 255, 0);
+
 #define SYSCLOCK 16000000
 #define WDT_Time        WDTO_2S
 #define SERIAL_BAUD     115200
